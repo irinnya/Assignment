@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./CSS/stylesheet.css">
+    <title>Posts</title>
+</head>
+<body>
+    <div id="main">
+        <div id="contentWrap">
+            <aside id="sidebar">
+                <a href="index.html">Post</a>
+                <a href="audio.html">Audio</a>
+            </aside>
+            <div class="sort">
+                <button onclick="getData()">Default Order</button>
+                <button onclick="handleData()">Sort by title</button>
+                <button onclick="groupByID()">Group By ID</button>
+            </div>
+            <table id="list">
+                <thead>
+                    <tr class="titleRow">
+                        <td>User ID</td>
+                        <td>ID</td>
+                        <td>Title</td>
+                        <td>Body</td>
+                    </tr>
+                </thead>
+                <tbody id="itemContainer"></tbody>
+            </table>
+        </div>
+        <footer class="footer" id="footer">
+            <p>Done by Huang Xin</p>
+        </footer>
+    </div>
+<script>
+var data;
+var url="https://jsonplaceholder.typicode.com/posts";
+async function getData(){
+    fetch(url)
+    .then(res=>res.json())
+    .then(save=>data=save)
+    .then(()=>{
+        document.getElementById("itemContainer").innerHTML="";
+        displayData(data);
+    });
+}
+getData(url);
+
+function handleData(){
+    var temp = data.slice();
+    temp.sort((a,b)=>{
+        return a["title"].localeCompare(b["title"]);
+    });
+    document.getElementById("itemContainer").innerHTML="";
+    displayData(temp);
+}
+
+function groupByID(){
+    var temp = data.slice();
+    const pDiv = document.getElementById("itemContainer");
+    temp.sort((a,b)=>{return a["userId"]-b["userId"]});
+    document.getElementById("itemContainer").innerHTML="";
+    var flag = -1;
+    var counter = 0;
+    var arr=[];
+    temp.map(item=>{
+        flag = flag ==-1?item.userId:flag;
+        if(flag==item.userId){
+            arr.push(item);
+            counter++;
+        }
+        else{
+            flag = item.userId;
+            const content = document.createElement("tr");
+            content.className = "item";
+            const userid = document.createElement("td");
+            userid.className = "userid"
+            userid.setAttribute("rowspan",counter);
+            userid.innerHTML = arr[0].userId;
+            const id = document.createElement("td");
+            id.className = "id"
+            id.innerHTML = arr[0].id;
+            const title = document.createElement("td");
+            title.className = "title"
+            title.innerHTML = arr[0].title;
+            const body = document.createElement("td");
+            body.className = "dataBody"
+            body.innerHTML = arr[0].body;
+            content.appendChild(userid);
+            content.appendChild(id);
+            content.appendChild(title);
+            content.appendChild(body);
+            pDiv.appendChild(content);
+            for(var i=1;i<counter;i++){
+                const content = document.createElement("tr");
+                content.className = "item";
+                const id = document.createElement("td");
+                id.className = "id"
+                id.innerHTML = arr[i].id;
+                const title = document.createElement("td");
+                title.className = "title"
+                title.innerHTML = arr[i].title;
+                const body = document.createElement("td");
+                body.className = "dataBody"
+                body.innerHTML = arr[i].body;
+                content.appendChild(id);
+                content.appendChild(title);
+                content.appendChild(body);
+                pDiv.appendChild(content);
+            }
+            arr = [];
+            counter=0;
+            arr.push(item);
+            counter++;
+        }
+    })
+    const content = document.createElement("tr");
+    content.className = "item";
+    const userid = document.createElement("td");
+    userid.className = "userid"
+    userid.setAttribute("rowspan",counter);
+    userid.innerHTML = arr[0].userId;
+    const id = document.createElement("td");
+    id.className = "id"
+    id.innerHTML = arr[0].id;
+    const title = document.createElement("td");
+    title.className = "title"
+    title.innerHTML = arr[0].title;
+    const body = document.createElement("td");
+    body.className = "dataBody"
+    body.innerHTML = arr[0].body;
+    content.appendChild(userid);
+    content.appendChild(id);
+    content.appendChild(title);
+    content.appendChild(body);
+    pDiv.appendChild(content);
+    for(var i=1;i<counter;i++){
+        const content = document.createElement("tr");
+        content.className = "item";
+        const id = document.createElement("td");
+        id.className = "id"
+        id.innerHTML = arr[i].id;
+        const title = document.createElement("td");
+        title.className = "title"
+        title.innerHTML = arr[i].title;
+        const body = document.createElement("td");
+        body.className = "dataBody"
+        body.innerHTML = arr[i].body;
+        content.appendChild(id);
+        content.appendChild(title);
+        content.appendChild(body);
+        pDiv.appendChild(content);
+    }
+}
+
+function displayData(data){
+    save = data;
+    const pDiv = document.getElementById("itemContainer");
+    data.map(item=>{
+        const content = document.createElement("tr");
+        content.className = "item";
+        const userid = document.createElement("td");
+        userid.className = "userid"
+        userid.innerHTML = item.userId;
+        const id = document.createElement("td");
+        id.className = "id"
+        id.innerHTML = item.id;
+        const title = document.createElement("td");
+        title.className = "title"
+        title.innerHTML = item.title;
+        const body = document.createElement("td");
+        body.className = "dataBody"
+        body.innerHTML = item.body;
+        content.appendChild(userid);
+        content.appendChild(id);
+        content.appendChild(title);
+        content.appendChild(body);
+        pDiv.appendChild(content);
+    })
+}
+</script>
+</body>
+</html>
